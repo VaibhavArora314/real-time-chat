@@ -35,6 +35,8 @@ const DashboardWrapper = () => {
         set(RoomInfo(roomId), (curRoom: RoomInfoInteface) => {
           const updatedRoom = { ...curRoom };
           updatedRoom.messages = [...updatedRoom.messages, message];
+          updatedRoom.lastActivity = message.creationDate;
+          updatedRoom.lastMessage = message.content;
           return updatedRoom;
         });
       },

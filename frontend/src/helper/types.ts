@@ -1,3 +1,10 @@
+export interface UserInterface {
+    _id: string,
+    username: string,
+    email: string,
+}
+
+
 export interface MessageInteface {
     _id: string,
     content: string,
@@ -10,11 +17,6 @@ export interface MessageInteface {
     }
 }
 
-export interface UserInterface {
-    _id: string,
-    username: string,
-    email: string,
-}
 
 export interface RoomOverviewInteface {
     _id: string,
@@ -34,4 +36,14 @@ export interface RoomInfoInteface {
     lastActivity: string,
     lastMessage: string,
     messages: MessageInteface[]
+}
+
+
+export interface InputField {
+    label: string;
+    type: string;
+    id: string;
+    placeholder: string;
+    required?: boolean;
+    handleOnChange: (target: HTMLInputElement) => void;
 }

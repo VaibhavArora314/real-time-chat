@@ -3,7 +3,7 @@ import { tokenState } from "./auth";
 import axios from "axios";
 import { RoomOverviewInteface } from "../../helper/types";
 
-// array of room ids with lastActivity and message
+// array of room ids with lastActivity and message and title
 export const RoomIDs = atom<RoomOverviewInteface[]>({
     key: "RoomIds",
     default: selector({

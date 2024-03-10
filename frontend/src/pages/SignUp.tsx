@@ -6,14 +6,7 @@ import Button from "../components/Button";
 import axios, { AxiosError } from "axios";
 import { useSetRecoilState } from "recoil";
 import { tokenState } from "../store/atoms/auth";
-interface Field {
-  label: string;
-  type: string;
-  id: string;
-  placeholder: string;
-  required: boolean;
-  handleOnChange: (target: HTMLInputElement) => void;
-}
+import { InputField } from "../helper/types";
 
 interface Errors {
   username: string;
@@ -35,7 +28,7 @@ const SignUp = () => {
   });
   const navigate = useNavigate();
 
-  const fields: Field[] = useMemo<Field[]>(
+  const fields: InputField[] = useMemo<InputField[]>(
     () => [
       {
         id: "username",

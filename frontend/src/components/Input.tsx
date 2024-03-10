@@ -1,10 +1,6 @@
-interface InputProps {
-    label: string,
-    type: string,
-    id: string,
-    placeholder: string,
-    required?: boolean
-    handleOnChange: (target:HTMLInputElement) => void,
+import { InputField } from "../helper/types";
+
+interface InputProps extends InputField {
     error: string
   }
 

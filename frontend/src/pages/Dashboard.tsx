@@ -4,19 +4,17 @@ import Sidebar from "../components/Sidebar";
 import { useState } from "react";
 import ChatComponent from "../components/ChatComponent";
 import { Socket } from "socket.io-client";
+import { useRecoilValue } from "recoil";
+import { selectedRoomAtom } from "../store/atoms/selectedRoom";
 
 interface DashboardProps {
   socket: Socket | null;
 }
 
 const Dashboard = ({ socket }: DashboardProps) => {
-  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const handleRoomClick = (id: string) => {
-    setSelectedRoomId(id);
-  };
+  const selectedRoomId = useRecoilValue(selectedRoomAtom);
 
   const sendMessage = (message: string, roomId: string) => {
     console.log(message, roomId);
@@ -34,8 +32,6 @@ const Dashboard = ({ socket }: DashboardProps) => {
     <>
       <div className="container min-h-[90vh] mx-auto flex flex-col md:flex-row justify-center items-start p-8">
         <Sidebar
-          selectedRoomId={selectedRoomId}
-          handleRoomClick={handleRoomClick}
           handleCreateModalOpen={() => {
             setShowCreateModal(true);
           }}
@@ -46,7 +42,6 @@ const Dashboard = ({ socket }: DashboardProps) => {
 
         {selectedRoomId ? (
           <ChatComponent
-            selectedRoomId={selectedRoomId}
             sendMessage={sendMessage}
           />
         ) : (
