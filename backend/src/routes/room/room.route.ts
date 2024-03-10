@@ -3,8 +3,6 @@ import authMiddleware from "../../middlewares/authMiddleware";
 import { UserAuthRequest } from "../../helpers/types";
 import { Room, User } from "../../db";
 import STATUS_CODES from "../../helpers/statusCodes";
-import { v4 } from 'uuid';
-import { createRoomSchema } from "./room.zodschema";
 import mongoose from "mongoose";
 
 const roomRouter = Router();
@@ -88,94 +86,6 @@ roomRouter.get('/my-rooms/:id', authMiddleware, async (req: UserAuthRequest, res
             lastMessage: room?.lastMessage,
         },
     })
-})
-
-roomRouter.post('/create', authMiddleware, async (req: UserAuthRequest, res: Response) => {
-    const userId = req.userId;
-    const payload = req.body;
-
-    const result = createRoomSchema.safeParse(payload);
-
-    if (!result.success) {
-        let errors: ErrorSchema = {
-            title: "",
-            description: "",
-            other: ""
-        }
-
-        result.error.errors.forEach(err => {
-            if (err.path[0]) {
-                errors[err.path[0].toString() as keyof ErrorSchema] = err.message;
-            } else {
-                errors["other"] = err.message;
-            }
-        })
-
-        return res.status(STATUS_CODES.BadRequest).json({
-            errors,
-        })
-    }
-
-    const randomInviteCode = v4().replace(/-/g, '').substring(0, 10);
-
-    try {
-        const user = await User.findOne({ _id: userId });
-
-        if (!user) {
-            return res.status(STATUS_CODES.BadRequest).json({
-                errors: {
-                    other: "No such user exists!"
-                }
-            })
-        }
-
-        let newRoom: any = await Room.create({
-            title: result.data.title,
-            description: result.data.description,
-            admin: userId,
-            creationDate: Date.now(),
-            inviteCode: randomInviteCode,
-            participants: [userId],
-            messages: [],
-            lastActivity: Date.now(),
-        })
-
-        user.rooms.push(newRoom._id);
-        await user.save();
-
-        newRoom = await (await newRoom.populate("participants")).populate("admin");
-
-        return res.status(STATUS_CODES.Created).json({
-            room: {
-                _id: newRoom._id,
-                title: newRoom?.title,
-                description: newRoom?.description,
-                admin: {
-                    _id: newRoom?.admin?._id,
-                    username: newRoom?.admin?.username,
-                    email: newRoom?.admin?.email
-                },
-                inviteCode: (userId == newRoom?.admin?._id) ? newRoom?.inviteCode : null,
-                participants: newRoom?.participants?.map((user: any) => ({
-                    _id: user?._id,
-                    username: user?.username,
-                    email: user?.email
-                })),
-                creationDate: newRoom.creationDate,
-                lastActivity: newRoom.lastActivity,
-                lastMessage: newRoom.lastMessage,
-                messages: newRoom.messages
-            }
-        })
-    } catch (error) {
-        console.log(error);
-
-        return res.status(STATUS_CODES.InternalServerError).json({
-            error: {
-                other: "An unexpected occurred"
-            }
-        })
-    }
 })
 
 export default roomRouter;
