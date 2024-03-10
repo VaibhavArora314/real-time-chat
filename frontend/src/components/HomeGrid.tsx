@@ -8,25 +8,25 @@ interface GridElement {
 const gridElements: GridElement[] = [
   {
     id: 1,
-    src: "demo.png",
+    src: "demo/createGroup.png",
     alt: "Creating group",
     label: "Create a group",
   },
   {
     id: 2,
-    src: "demo.png",
+    src: "demo/inviteCode.png",
     alt: "sending invites",
     label: "Send group invites to your friends",
   },
   {
     id: 3,
-    src: "demo.png",
+    src: "demo/joinGroup.png",
     alt: "Joining group",
     label: "Join groups via invite code",
   },
   {
     id: 4,
-    src: "demo.png",
+    src: "demo/chat.png",
     alt: "Chatting",
     label: "Volla! You can start chatting now!",
   },

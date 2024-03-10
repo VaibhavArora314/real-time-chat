@@ -37,7 +37,7 @@ const RoomDetailsIcon = ({ room }: { room: RoomInfoInteface }) => {
 
       {showDetails && (
         <div
-          className="absolute top-10 left-0 bg-white shadow-md p-4 rounded-lg w-80 font-normal"
+          className="absolute top-10 left-0 bg-white shadow-md p-4 rounded-lg min-w-96 w-fit font-normal"
           onMouseEnter={() => setIsDetailsHovered(true)}
           onMouseLeave={() => setIsDetailsHovered(false)}
         >
@@ -51,6 +51,7 @@ const RoomDetailsIcon = ({ room }: { room: RoomInfoInteface }) => {
             Created on: {room.creationDate.slice(0,10)}
           </p>
           <p className="text-md">Created by: {room.admin.username}</p>
+          <p className="text-md">{room.inviteCode ? `Invite code: ${room.inviteCode}` : "You do not have access to see invite code. Ask Admin."}</p>
           <p className="text-md">Participants: </p>
           <div className="px-4">
             {room.participants.map(({ username }, index) => {
