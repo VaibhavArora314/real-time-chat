@@ -54,9 +54,9 @@ const RoomDetailsIcon = ({ room }: { room: RoomInfoInteface }) => {
           <p className="text-md">{room.inviteCode ? `Invite code: ${room.inviteCode}` : "You do not have access to see invite code. Ask Admin."}</p>
           <p className="text-md">Participants: </p>
           <div className="px-4">
-            {room.participants.map(({ username }, index) => {
+            {room.participants.map(({ _id,username }, index) => {
               return (
-                <p className="text-md">
+                <p className="text-md" key={_id}>
                   {index + 1}. {username}
                 </p>
               );

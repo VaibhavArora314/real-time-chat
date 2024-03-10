@@ -28,6 +28,13 @@ const Dashboard = ({ socket }: DashboardProps) => {
     });
   };
 
+  const createRoom = (title:string,description:string) => {
+    socket?.emit("create_room", {
+      title,
+      description
+    });
+  }
+
   return (
     <>
       <div className="container min-h-[90vh] mx-auto flex flex-col md:flex-row justify-center items-start p-8">
@@ -65,6 +72,7 @@ const Dashboard = ({ socket }: DashboardProps) => {
           handleCreateModalClose={() => {
             setShowCreateModal(false);
           }}
+          createRoom={createRoom}
         />
       )}
     </>

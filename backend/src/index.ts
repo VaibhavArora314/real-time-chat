@@ -8,6 +8,7 @@ import { decodeJWT, verifyJWT } from "./helpers/jwt";
 import { CONNECTED_USERS } from "./store";
 import { Message, Room, User } from "./db";
 import { config } from "dotenv";
+import { v4 } from "uuid";
 config();
 
 const app = express();
@@ -52,9 +53,6 @@ io.use((socket, next) => {
 
     console.log(`User ${user?.username} connected using socket id ${socket.id} and present in ${socket.rooms.size} rooms initially!`);
 
-    // socket.on("joinRoom", (roomId: string) => {
-    //     socket.join(roomId);
-    // })
 
     socket.on("send_message", async ({ roomId, message }: {
         roomId: string,
@@ -97,9 +95,93 @@ io.use((socket, next) => {
         }
     })
 
+    socket.on("create_room", async ({title,description}:{title:string, description: string}) => {
+        try {
+            const room:any = await Room.create({
+                title,
+                description,
+                admin: userId,
+                creationDate: Date.now(),
+                lastActivity: Date.now(),
+                inviteCode: v4().replace(/-/g, '').substring(0, 10),
+                lastMessage: "",
+                messages: [],
+                participants: [userId],
+            })
+
+            await User.findOneAndUpdate({_id:userId}, {
+                $push: {
+                    rooms: room._id
+                }
+            })
+
+            const returnvalue = {
+                room: {
+                    _id: room?._id,
+                    title: room?.title,
+                    description: room?.description,
+                    admin: {
+                        _id: room?.admin?._id,
+                        username: room?.admin?.username,
+                        email: room?.admin?.email
+                    },
+                    inviteCode: (userId == room?.admin?._id) ? room?.inviteCode : null,
+                    participants: room?.participants?.map((user: any) => ({
+                        _id: user?._id,
+                        username: user?.username,
+                        email: user?.email
+                    })),
+                    messages: room?.messages?.map((message: any) => ({
+                        _id: message?._id,
+                        sender: {
+                            _id: message?.sender?._id,
+                            username: message?.sender?.username,
+                            email: message?.sender?.email,
+                        },
+                        content: message?.content,
+                        creationDate: message?.creationDate,
+                    })),
+                    creationDate: room?.creationDate,
+                    lastActivity: room?.lastActivity,
+                    lastMessage: room?.lastMessage,
+                },
+            }
+
+            io.to(socket.id).emit("joined_room", returnvalue);
+            socket.join(room._id.toString());
+
+            let newMessage: any = await Message.create({
+                content: `${user?.username} created the room`,
+                sender: null,
+                room: room._id,
+                creationDate: Date.now(),
+            })
+
+            await Room.findOneAndUpdate({ _id: room._id }, {
+                $push: { messages: newMessage._id },
+                lastActivity: newMessage.creationDate,
+                lastMessage: newMessage.content
+            });
+
+            const msgreturn = {
+                message: {
+                    _id: newMessage._id,
+                    content: newMessage.content,
+                    sender: null,
+                    room: newMessage.room,
+                    creationDate: newMessage.creationDate,
+                }
+            }
+
+            console.log(room._id.toString(), msgreturn);
+            io.to(room._id.toString()).emit("receive_message", msgreturn);
+        } catch (error) {
+            console.log("Error occurred!", error);
+        }
+    })
+
     socket.on("join_room", async ({ inviteCode }: { inviteCode: string }) => {
         try {
-            console.log(inviteCode);
             const room = await Room.findOne({ inviteCode: inviteCode });
             if (!room || !room._id)
                 throw new Error("No such room!");
@@ -161,8 +243,6 @@ io.use((socket, next) => {
             io.to(socket.id).emit("joined_room", returnvalue);
             socket.join(room._id.toString());
 
-            console.log("creating message")
-
             let newMessage: any = await Message.create({
                 content: `${user?.username} joined the room`,
                 sender: null,
@@ -200,7 +280,6 @@ io.use((socket, next) => {
             CONNECTED_USERS.splice(index, 1);
 
         console.log(`User disconnected ${socket.id}`);
-        // console.log("Connected users: ", CONNECTED_USERS);
     })
 });
 

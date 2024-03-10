@@ -7,6 +7,7 @@ import { useRecoilCallback, useRecoilValue } from "recoil";
 import { tokenState } from "../store/atoms/auth";
 import { RoomIDs, RoomInfo } from "../store/atoms/room";
 import { MessageInteface, RoomInfoInteface } from "../helper/types";
+import RedirectMessageComponent from "./RedirectMessageComponent";
 
 const DashboardWrapper = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,7 +35,7 @@ const DashboardWrapper = () => {
 
         set(RoomInfo(roomId), (curRoom: RoomInfoInteface) => {
           const updatedRoom = { ...curRoom };
-          updatedRoom.messages = [...updatedRoom.messages, message];
+          updatedRoom.messages = [...updatedRoom.messages,message];
           updatedRoom.lastActivity = message.creationDate;
           updatedRoom.lastMessage = message.content;
           return updatedRoom;
@@ -68,6 +69,7 @@ const DashboardWrapper = () => {
       auth: {
         token,
       },
+      transports: ['websocket']
     });
 
     newSocket.on("connect", () => {
@@ -98,7 +100,7 @@ const DashboardWrapper = () => {
 
   if (loading) return <Loader />;
 
-  if (error) return <>{error}</>;
+  if (error) return <RedirectMessageComponent message={error}/>;
 
   return (
     <>
