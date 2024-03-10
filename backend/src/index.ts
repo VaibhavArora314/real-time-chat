@@ -7,7 +7,8 @@ import bodyParser from "body-parser";
 import { decodeJWT, verifyJWT } from "./helpers/jwt";
 import { CONNECTED_USERS } from "./store";
 import { Message, Room, User } from "./db";
-import mongoose from "mongoose";
+import { config } from "dotenv";
+config();
 
 const app = express();
 app.use(cors());
@@ -18,7 +19,7 @@ app.use('/api/v1', rootRouter);
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173"
+        origin: process.env.FRONTEND_URL || "http://localhost:5173"
     }
 });
 
@@ -99,8 +100,8 @@ io.use((socket, next) => {
     socket.on("join_room", async ({ inviteCode }: { inviteCode: string }) => {
         try {
             console.log(inviteCode);
-            const room = await Room.findOne({inviteCode:inviteCode});
-            if (!room || !room._id) 
+            const room = await Room.findOne({ inviteCode: inviteCode });
+            if (!room || !room._id)
                 throw new Error("No such room!");
 
             if (room.participants.find((value) => {
@@ -108,8 +109,8 @@ io.use((socket, next) => {
                     return true;
             }))
                 throw new Error("Already in room!");
-            
-            await User.findOneAndUpdate({_id:userId}, {
+
+            await User.findOneAndUpdate({ _id: userId }, {
                 $push: {
                     rooms: room._id
                 }
@@ -118,15 +119,15 @@ io.use((socket, next) => {
             room.participants.push(userId);
             await room.save();
 
-            const finalRoom:any = await Room.findOne({_id: room._id}).populate("admin").populate("participants").populate({
+            const finalRoom: any = await Room.findOne({ _id: room._id }).populate("admin").populate("participants").populate({
                 path: "messages",
                 populate: {
                     path: "sender"
                 }
-            })        
+            })
 
             const returnvalue = {
-                room : {
+                room: {
                     _id: finalRoom?._id,
                     title: finalRoom?.title,
                     description: finalRoom?.description,
@@ -185,10 +186,10 @@ io.use((socket, next) => {
                 }
             }
 
-            console.log(room._id.toString(),msgreturn);
+            console.log(room._id.toString(), msgreturn);
             io.to(room._id.toString()).emit("receive_message", msgreturn);
         } catch (error) {
-            console.log("Error occurred!",error);
+            console.log("Error occurred!", error);
         }
     })
 

@@ -11,7 +11,7 @@ import Loader from "./components/Loader";
 import AuthConditionalRouter from "./components/AuthenticatedRoute";
 import DashboardWrapper from "./components/DashboardWrapper";
 
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 const App = () => {
   return (
