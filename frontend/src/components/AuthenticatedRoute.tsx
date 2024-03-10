@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil";
-import { tokenState, userState } from "../store/atoms/auth";
+import { userState } from "../store/atoms/auth";
 import { PropsWithChildren, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
