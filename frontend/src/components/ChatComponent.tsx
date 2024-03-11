@@ -12,12 +12,19 @@ interface ChatComponentProps {
   leaveRoom: (roomId: string) => void;
 }
 
+const commonEmotes = ["😊", "😂", "😍", "😎", "🥰", "😭", "🤣", "🤔"];
+
 const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
   const selectedRoomId = useRecoilValue(selectedRoomAtom);
   const user = useRecoilValue(userState);
   const room: RoomInfoInteface = useRecoilValue(RoomInfo(selectedRoomId));
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showEmotePanel, setShowEmotePanel] = useState(false);
+
+  const insertEmote = (emote: string) => {
+    setMessage((curMsg) => curMsg + emote);
+  };
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -27,7 +34,7 @@ const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
 
   return (
     <div className="w-[90%] md:w-3/4 h-full flex flex-col">
-      <div className="mb-4 h-full">
+      <div className="h-full">
         <div className="flex flex-row justify-between p-2">
           <div className="flex flex-row items-start justify-start gap-4">
             <h2 className="text-xl font-semibold mb-4">{room?.title}</h2>
@@ -87,12 +94,13 @@ const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
           <div ref={messagesEndRef} />
         </div>
       </div>
-      <div className="mt-6">
+      <div className="mt-2">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             sendMessage(message, selectedRoomId);
             setMessage("");
+            setShowEmotePanel(false);
           }}
         >
           <div className="mt-4 flex flex-row gap-2">
@@ -102,9 +110,33 @@ const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
               className="w-full border border-gray-300 rounded-lg px-4 py-2"
               onChange={(e) => {
                 setMessage(e.target.value);
+                setShowEmotePanel(false);
               }}
               value={message}
             />
+            <span className="relative">
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                type="button"
+                onClick={() => {
+                  setShowEmotePanel((val) => !val);
+                }} // Toggle emote panel visibility
+              >
+                😊
+              </button>
+              {showEmotePanel && ( // Render emote panel if showEmotePanel is true
+                <div className="emote-panel absolute bottom-20 right-0 flex flex-row gap-2 bg-white p-4 rounded-lg">
+                  {commonEmotes.map((emote: string) => (
+                    <span
+                      className="emote cursor-pointer"
+                      onClick={() => insertEmote(emote)}
+                    >
+                      {emote}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </span>
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
               onClick={() => {}}

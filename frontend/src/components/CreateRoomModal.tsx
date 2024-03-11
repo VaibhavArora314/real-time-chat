@@ -38,6 +38,7 @@ const CreateRoomModal = ({
     }
 
     createRoom(title, description);
+    handleCreateModalClose();
   };
 
   return (

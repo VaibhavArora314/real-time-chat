@@ -46,7 +46,7 @@ const joinRoomHandler = async (
 
     io.to(socket.id).emit("joined_room", {
       room: formatRoom(populatedRoom, userId),
-      message: `Successfully created room ${room.title}`,
+      message: `Successfully joined room ${room.title}`,
     });
     socket.join(room._id.toString());
 

@@ -21,7 +21,7 @@ const sendMessageHandler = async (
       creationDate: Date.now(),
     });
 
-    await Room.findOneAndUpdate(
+    const room = await Room.findOneAndUpdate(
       { _id: roomId },
       {
         $push: { messages: newMessage._id },
@@ -50,6 +50,7 @@ const sendMessageHandler = async (
         room: populatedMessage?.room,
         creationDate: populatedMessage?.creationDate,
       },
+      roomName: room?.title,
     };
 
     io.to(roomId).emit("receive_message", returnvalue);
