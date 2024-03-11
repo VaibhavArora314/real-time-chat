@@ -1,5 +1,5 @@
 # Real time chat application
-- Users can create rooms, share invite codes, join rooms, and chat securely.
+- Users can create rooms, share invite codes, join rooms, leave rooms and chat securely.
 - Tech Stack:
   - TypeScript
   - Express.js
@@ -7,6 +7,7 @@
   - Recoil
   - Socket.io
   - Mongodb
+  - Tailwind
 
 <details>
   <summary>Snapshots</summary>
@@ -33,4 +34,21 @@
   Sign Up
   ![image](https://github.com/VaibhavArora314/real-time-chat/assets/84830429/b730d5b9-70e0-44ca-bbe2-003a444bc8ac)
 
+</details>
+
+<details>
+  <summary>Run locally</summary>
+
+  Create .env files for backend and frontend as shown in .env.example in respective folders. <br/>
+  For backend, run the following cmds in backend directory:
+  ```
+  npm i
+  npx tsc -b
+  node dist/index.js
+  ```
+  For frontend, run the following cmds in frontend directory:
+  ```
+  npm i
+  npm run dev
+  ```
 </details>
