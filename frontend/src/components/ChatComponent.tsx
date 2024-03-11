@@ -23,7 +23,7 @@ const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  },[selectedRoomId])
+  }, [selectedRoomId]);
 
   return (
     <div className="w-[90%] md:w-3/4 h-full flex flex-col">
@@ -36,9 +36,12 @@ const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
           <Button
             label="Leave Room"
             onClick={() => {
-              const message = "Are you sure you want to leave this room? " + (room.participants.length == 1 ? "Leaving the room will automatically delete this room since you are the only participant." : "")
-              if (window.confirm(message))
-                leaveRoom(room._id);
+              const message =
+                "Are you sure you want to leave this room? " +
+                (room.participants.length == 1
+                  ? "Leaving the room will automatically delete this room since you are the only participant."
+                  : "");
+              if (window.confirm(message)) leaveRoom(room._id);
             }}
             type="button"
             color="blue"
@@ -59,13 +62,19 @@ const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
 
             if (message.sender._id == user._id)
               return (
-                <div key={message._id} className={`mb-2 ml-20 md:ml-40 text-end break-words`}>
+                <div
+                  key={message._id}
+                  className={`mb-2 ml-20 md:ml-40 text-end break-words`}
+                >
                   <p>{message.content}</p>
                 </div>
               );
 
             return (
-              <div key={message._id} className={`mb-2 mr-20 md:mr-40 text-start break-words`}>
+              <div
+                key={message._id}
+                className={`mb-2 mr-20 md:mr-40 text-start break-words`}
+              >
                 <p>
                   {message.sender?.username
                     ? message.sender?.username
@@ -79,26 +88,32 @@ const ChatComponent = ({ sendMessage, leaveRoom }: ChatComponentProps) => {
         </div>
       </div>
       <div className="mt-6">
-        <div className="mt-4 flex flex-row gap-2">
-          <input
-            type="text"
-            placeholder="Type your message..."
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            onChange={(e) => {
-              setMessage(e.target.value);
-            }}
-            value={message}
-          />
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-            onClick={() => {
-              sendMessage(message, selectedRoomId);
-              setMessage("");
-            }}
-          >
-            Send
-          </button>
-        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            sendMessage(message, selectedRoomId);
+            setMessage("");
+          }}
+        >
+          <div className="mt-4 flex flex-row gap-2">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+              value={message}
+            />
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+              onClick={() => {}}
+              type="submit"
+            >
+              Send
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

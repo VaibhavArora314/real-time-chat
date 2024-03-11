@@ -10,6 +10,8 @@ import React from "react";
 import Loader from "./components/Loader";
 import AuthConditionalRouter from "./components/AuthenticatedRoute";
 import DashboardWrapper from "./components/DashboardWrapper";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -41,6 +43,7 @@ const App = () => {
             />
             <Route path="*" element={<Navigate to="/" replace/>} />
           </Routes>
+      <ToastContainer />
         </React.Suspense>
       </RecoilRoot>
     </BrowserRouter>

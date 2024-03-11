@@ -51,7 +51,7 @@ const createRoomHandler = async (
 
         if (!populatedRoom) return;
 
-        io.to(socket.id).emit("joined_room", {room: formatRoom(populatedRoom,userId)});
+        io.to(socket.id).emit("joined_room", {room: formatRoom(populatedRoom,userId), message: `Successfully created room ${title}`});
         socket.join(room._id.toString());
 
         await sendMessageHandler(io,null,room._id.toString(),`${user?.username} created the room`);

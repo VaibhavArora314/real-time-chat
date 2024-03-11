@@ -13,9 +13,29 @@ const CreateRoomModal = ({
 }: CreateRoomModalProps) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [error,setError] = useState({
+    title: "",
+    description: ""
+  })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (title.trim().length < 5 || title.trim().length > 40){
+      setError({
+        title: "Title need to have length between 5 and 40.",
+        description: ""
+      })
+      return;
+    }
+
+    if (description.trim().length > 100){
+      setError({
+        title: "",
+        description: "Description can have max 100 length."
+      })
+      return;
+    }
 
     createRoom(title, description);
   };
@@ -30,7 +50,7 @@ const CreateRoomModal = ({
             type="text"
             label="Title"
             placeholder=""
-            error=""
+            error={error.title}
             handleOnChange={({ value }) => {
               setTitle(value);
             }}
@@ -41,7 +61,7 @@ const CreateRoomModal = ({
             type="text"
             label="Description"
             placeholder=""
-            error=""
+            error={error.description}
             handleOnChange={({ value }) => {
               setDescription(value);
             }}

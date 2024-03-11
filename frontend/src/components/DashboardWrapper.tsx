@@ -9,6 +9,7 @@ import { RoomIDs, RoomInfo } from "../store/atoms/room";
 import { MessageInteface, RoomInfoInteface } from "../helper/types";
 import RedirectMessageComponent from "./RedirectMessageComponent";
 import { selectedRoomAtom } from "../store/atoms/selectedRoom";
+import { toast } from 'react-toastify';
 
 const DashboardWrapper = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -47,7 +48,7 @@ const DashboardWrapper = () => {
 
   const handleRoomJoin = useRecoilCallback(
     ({ set }) =>
-      (room: RoomInfoInteface) => {
+      (room: RoomInfoInteface,message:string) => {
         set(RoomIDs, (curVal) => {
           const updatedVals = [...curVal];
           updatedVals.push({
@@ -57,10 +58,11 @@ const DashboardWrapper = () => {
             lastMessage: room.lastMessage,
           });
 
-          console.log(updatedVals);
           return updatedVals;
         });
         set(RoomInfo(room._id), room);
+
+        toast.success(message);
       },
     []
   );
@@ -76,6 +78,8 @@ const DashboardWrapper = () => {
       if (curVal == roomId) return "";
       return curVal;
     })
+
+    toast.success("Successfully left the room!")
   }, [])
 
   useEffect(() => {
@@ -95,10 +99,10 @@ const DashboardWrapper = () => {
       setLoading(false);
     });
 
-    newSocket.on("joined_room", (data: { room: RoomInfoInteface }) => {
+    newSocket.on("joined_room", (data: { room: RoomInfoInteface,message: string }) => {
       console.log("joined_room");
 
-      handleRoomJoin(data.room);
+      handleRoomJoin(data.room,data.message);
     });
 
     newSocket.on("receive_message", (data: { message: MessageInteface }) => {

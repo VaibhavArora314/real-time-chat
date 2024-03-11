@@ -10,6 +10,7 @@ const sendMessageHandler = async (
   message: string
 ) => {
   try {
+    message = message.trim();
     if (message.length > 300)
       message = message.substring(0,300);
 
