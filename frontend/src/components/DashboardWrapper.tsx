@@ -8,6 +8,7 @@ import { tokenState } from "../store/atoms/auth";
 import { RoomIDs, RoomInfo } from "../store/atoms/room";
 import { MessageInteface, RoomInfoInteface } from "../helper/types";
 import RedirectMessageComponent from "./RedirectMessageComponent";
+import { selectedRoomAtom } from "../store/atoms/selectedRoom";
 
 const DashboardWrapper = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -64,6 +65,19 @@ const DashboardWrapper = () => {
     []
   );
 
+  const handleLeaveRoom = useRecoilCallback(({set}) => (roomId: string) => {
+    set(RoomIDs, (curRooms) => {
+      return curRooms.filter((curRoom) => (curRoom._id != roomId));
+    })
+
+    set(RoomInfo(roomId), null);
+
+    set(selectedRoomAtom, curVal => {
+      if (curVal == roomId) return "";
+      return curVal;
+    })
+  }, [])
+
   useEffect(() => {
     const newSocket = io(import.meta.env.VITE_BACKEND_URL, {
       auth: {
@@ -90,6 +104,10 @@ const DashboardWrapper = () => {
     newSocket.on("receive_message", (data: { message: MessageInteface }) => {
       handleReceiveMessage(data.message);
     });
+
+    newSocket.on("left_room", (data: {roomId: string}) => {
+      handleLeaveRoom(data.roomId);
+    })
 
     setSocket(newSocket);
 

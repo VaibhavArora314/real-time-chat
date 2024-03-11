@@ -53,7 +53,7 @@ const joinRoomHandler = async (
       io,
       null,
       room._id.toString(),
-      `${user?.username} created the room`
+      `${user?.username} joined the room`
     );
   } catch (error) {
     console.log("Error occurred!", error);

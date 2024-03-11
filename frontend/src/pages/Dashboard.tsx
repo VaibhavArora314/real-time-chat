@@ -17,7 +17,7 @@ const Dashboard = ({ socket }: DashboardProps) => {
   const selectedRoomId = useRecoilValue(selectedRoomAtom);
 
   const sendMessage = (message: string, roomId: string) => {
-    console.log(message, roomId);
+    if (!message || message.length == 0) return "";
 
     socket?.emit("send_message", { message, roomId });
   };
@@ -28,11 +28,17 @@ const Dashboard = ({ socket }: DashboardProps) => {
     });
   };
 
-  const createRoom = (title:string,description:string) => {
+  const createRoom = (title: string, description: string) => {
     socket?.emit("create_room", {
       title,
-      description
+      description,
     });
+  };
+
+  const leaveRoom = (roomId: string) => {
+    socket?.emit("leave_room", {
+      roomId
+    })
   }
 
   return (
@@ -48,9 +54,7 @@ const Dashboard = ({ socket }: DashboardProps) => {
         />
 
         {selectedRoomId ? (
-          <ChatComponent
-            sendMessage={sendMessage}
-          />
+          <ChatComponent sendMessage={sendMessage} leaveRoom={leaveRoom}/>
         ) : (
           <div className="w-[90%] md:w-3/4 flex flex-col items-start justify-start">
             Please select a group to see messages

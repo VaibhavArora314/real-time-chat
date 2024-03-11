@@ -11,6 +11,7 @@ import { config } from "dotenv";
 import sendMessageHandler from "./socket/events/send_message";
 import createRoomHandler from "./socket/events/create_room";
 import joinRoomHandler from "./socket/events/join_room";
+import leaveRoomHandler from "./socket/events/leave_room";
 config();
 
 const app = express();
@@ -59,19 +60,23 @@ io.use((socket, next) => {
   socket.on(
     "send_message",
     async ({ roomId, message }: { roomId: string; message: string }) => {
-      sendMessageHandler(io, userId, roomId, message);
+      await sendMessageHandler(io, userId, roomId, message);
     }
   );
 
   socket.on(
     "create_room",
     async ({ title, description }: { title: string; description: string }) => {
-      createRoomHandler(io, socket, userId, title, description);
+      await createRoomHandler(io, socket, userId, title, description);
     }
   );
 
   socket.on("join_room", async ({ inviteCode }: { inviteCode: string }) => {
-    joinRoomHandler(io, socket, userId, inviteCode);
+    await joinRoomHandler(io, socket, userId, inviteCode);
+  });
+
+  socket.on("leave_room", async ({ roomId }: { roomId: string }) => {
+    await leaveRoomHandler(io, socket, userId, roomId);
   });
 
   socket.on("disconnect", () => {

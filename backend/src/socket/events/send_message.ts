@@ -10,6 +10,9 @@ const sendMessageHandler = async (
   message: string
 ) => {
   try {
+    if (message.length > 300)
+      message = message.substring(0,300);
+
     const newMessage = await Message.create({
       content: message,
       sender: userId,
