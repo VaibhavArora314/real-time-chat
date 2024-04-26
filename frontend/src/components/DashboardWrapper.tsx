@@ -19,6 +19,22 @@ const DashboardWrapper = () => {
   const selectedRoomId = useRecoilValue(selectedRoomAtom);
   const user = useRecoilValue(userState);
 
+  const messageToast = (roomName:string,message:MessageInteface) => {
+    const roomId = message.room;
+
+    console.log("Room: "+roomId,"Selected Room:"+selectedRoomId);
+    if (message.sender?._id !== user._id)
+      toast.info(
+        <div>
+          <h2 className="font-semibold text-lg">New Message in {roomName}</h2>
+          <p>
+            {message.sender?._id ? `${message.sender.username}: ` : "System: "}
+            {message.content}
+          </p>
+        </div>
+      );
+  }
+
   const handleReceiveMessage = useRecoilCallback(
     ({ set }) =>
       (message: MessageInteface, roomName: string) => {
@@ -45,18 +61,9 @@ const DashboardWrapper = () => {
           return updatedRoom;
         });
 
-        if (roomId != selectedRoomId && message.sender?._id != user._id)
-          toast.info(
-            <div>
-              <h2 className="font-semibold text-lg">New Message in {roomName}</h2>
-              <p>
-                {message.sender?._id ? `${message.sender.username}: ` : "System: "}
-                {message.content}
-              </p>
-            </div>
-          );
+        messageToast(roomName,message);
       },
-    [selectedRoomId]
+    []
   );
 
   const handleRoomJoin = useRecoilCallback(
