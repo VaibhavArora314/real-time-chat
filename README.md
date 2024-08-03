@@ -38,17 +38,21 @@
 
 <details>
   <summary>Run locally</summary>
-
-  Create .env files for backend and frontend as shown in .env.example in respective folders. <br/>
-  For backend, run the following cmds in backend directory:
-  ```
-  npm i
-  npx tsc -b
-  node dist/index.js
-  ```
-  For frontend, run the following cmds in frontend directory:
-  ```
-  npm i
-  npm run dev
-  ```
+  
+  - With Docker, simply run <code>docker-compose up</code> in root of the project after cloning
+  
+  - If you don't have docker, follow the below steps:
+    
+    Create .env files for backend and frontend as shown in .env.example in respective folders. <br/>
+    For backend, run the following cmds in backend directory:
+    ```
+    npm i
+    npx tsc -b
+    node dist/index.js
+    ```
+    For frontend, run the following cmds in frontend directory:
+    ```
+    npm i
+    npm run dev
+    ```
 </details>
